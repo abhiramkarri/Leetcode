@@ -1,0 +1,60 @@
+734. Sentence Similarity
+
+We can represent a sentence as an array of words, for example, the sentence "I am happy with leetcode" can be represented as arr = ["I","am",happy","with","leetcode"].
+
+Given two sentences sentence1 and sentence2 each represented as a string array and given an array of string pairs similarPairs where similarPairs[i] = [xi, yi] indicates that the two words xi and yi are similar.
+Return true if sentence1 and sentence2 are similar, or false if they are not similar.
+
+Two sentences are similar if:
+They have the same length (i.e., the same number of words)
+sentence1[i] and sentence2[i] are similar.
+Notice that a word is always similar to itself, also notice that the similarity relation is not transitive. For example, if the words a and b are similar, and the words b and c are similar, a and c are not necessarily similar.
+
+Example 1:
+Input: sentence1 = ["great","acting","skills"], sentence2 = ["fine","drama","talent"], similarPairs = [["great","fine"],["drama","acting"],["skills","talent"]]
+Output: true
+Explanation: The two sentences have the same length and each word i of sentence1 is also similar to the corresponding word in sentence2.
+
+Example 2:
+Input: sentence1 = ["great"], sentence2 = ["great"], similarPairs = []
+Output: true
+Explanation: A word is similar to itself.
+
+Example 3:
+Input: sentence1 = ["great"], sentence2 = ["doubleplus","good"], similarPairs = [["great","doubleplus"]]
+Output: false
+Explanation: As they don't have the same length, we return false.
+
+Solution
+
+class Solution {
+    public boolean areSentencesSimilar(String[] sentence1, String[] sentence2, List<List<String>> similarPairs) {
+        if(sentence1.length!=sentence2.length) return false;
+
+        Map<String, List<String>> map = new HashMap();
+        for(List<String> list : similarPairs){
+            map.putIfAbsent(list.get(0), new ArrayList());
+            map.putIfAbsent(list.get(1), new ArrayList());
+            map.get(list.get(0)).add(list.get(1));
+            map.get(list.get(1)).add(list.get(0));
+        }
+
+        for(int i=0;i<sentence1.length;i++){
+            
+            if(sentence1[i].equals(sentence2[i])) continue;
+               
+            if(map.containsKey(sentence1[i])){
+                if(map.get(sentence1[i]).contains(sentence2[i]) == false) return false;
+            }else{
+                return false;
+            }           
+        }
+        return true;
+    }
+}
+/*
+The time complexity of the given code is O(N+P) where N is the length of the input arrays words1 and words2, and P is the length of the pairs array. The space complexity is also O(P), where P is the length of the pairs array, since we are using a HashMap to store the pairs.
+In the first loop, we iterate over the pairs array and insert each pair into the HashMap. This takes O(P) time.
+In the second loop, we iterate over the words1 array, and for each word that is different from the corresponding word in words2, we check whether it is present in the HashMap and whether its corresponding set of similar words contains the corresponding word from words2. Since we are iterating over words1 and words2 in parallel, this takes O(N) time.
+Therefore, the overall time complexity of the code is O(N+P). The space complexity is O(P) since we are storing the pairs in a HashMap.
+*/
